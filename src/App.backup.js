@@ -2,55 +2,56 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchingMovies } from './actions/moviesAction';
+import { updateUser, apiRequest } from './actions/userActions';
 
 class App extends Component {
 
-  componentDidMount(){
-      this.props.onApiRequest('vik');
+  constructor(props){
+    super(props);
+
+    this.onUpdateUser = this.onUpdateUser.bind(this)
   }
 
-  moviesList = (movies) => (
-    movies.map( movie => (
-      <div key={movie.imdbID}>
-        <h4>{movie.Title}</h4>
-        <p>Year of relese: {movie.Year}</p>
-      </div>
-    ))
-  )
+  onUpdateUser(e){
+    this.props.onUpdateUser(e.target.value)
+  }
 
-  fetchMovies = e => {
-    this.props.onApiRequest(e.target.value);
+  componentDidMount(){
+      this.props.onApiRequest();
   }
 
   render() {
-    const { movies, massage } = this.props.movies;
-    console.log(movies, massage)
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-        <input onChange={this.fetchMovies} />
-        <h3>{massage}</h3>
-        {this.moviesList(movies)}
+        <p className="App-intro">
+          To get started, edit <code>src/App.js</code> and save to reload.
+        </p>
+        <input onChange={this.onUpdateUser} />
+        <h3>{this.props.user}</h3>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
 
   return {
-    movies: state.movies
+    products: state.products,
+    user: state.user,
+    balaUser: `${state.user} ${props.aRandome}`
   }
 
 }
 
 const mapActionsToProps = {
-  onApiRequest: fetchingMovies
+  onUpdateUser: updateUser,
+  onApiRequest: apiRequest
 }
 
 export default connect( mapStateToProps, mapActionsToProps)(App)
